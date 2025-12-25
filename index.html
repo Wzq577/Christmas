@@ -330,7 +330,7 @@
         window.userConfig = {
             textTop: "",
             textBottom: "",
-            // 修改：直接加载预设的13张图片
+            // 修改：使用硬编码的13张图片
             images: [
                 './p1.jpg', './p2.jpg', './p3.jpg', './p4.jpg', './p5.jpg',
                 './p6.jpg', './p7.jpg', './p8.jpg', './p9.jpg', './p10.jpg',
@@ -542,7 +542,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
             renderer.toneMapping = THREE.ReinhardToneMapping; 
-            renderer.toneMappingExposure = 3.0; 
+            renderer.toneMappingExposure = 2.0; // 调回你喜欢的亮度
             container.appendChild(renderer.domElement);
 
             mainGroup = new THREE.Group();
@@ -663,6 +663,9 @@
                     }
                 } else if (mode === 'FOCUS') {
                     if (this.mesh === focusTargetMesh) {
+                        // 修正偏心问题：将目标位置强制设置为相机正前方
+                        // 之前的代码可能会因为Group的旋转导致坐标偏移
+                        // 这里我们使用本地坐标转换到世界坐标的逆矩阵，但直接指定 (0,0,40)
                         const desiredWorldPos = new THREE.Vector3(0, 0, 40);
                         const invMatrix = new THREE.Matrix4().copy(mainGroup.matrixWorld).invert();
                         target = desiredWorldPos.applyMatrix4(invMatrix);
